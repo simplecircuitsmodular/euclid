@@ -31,10 +31,6 @@ int ORANGE[3] = {255, 64, 0};
 int _PINK[3] = {255, 27, 27};
 int PURPLE[3] = {255, 27, 255};
 
-#define encoder0PinA  2
-#define encoder0PinB  3
-#define debounceTime 500
-
 unsigned long int interruptTime = millis();
 volatile unsigned int encoder0Pos = 0;
 
@@ -62,6 +58,7 @@ bool pause = false;
 int clkTime = 500;
 unsigned long int clkChange = millis();
 unsigned long int pauseBounce = millis();
+
 void setup() {
   Serial.begin(9600);
   Serial.println("Running..");
@@ -84,15 +81,14 @@ void setup() {
   pinMode(ROTATE_BUTTON, INPUT_PULLUP);
   pinMode(PAUSE_BUTT, INPUT_PULLUP);
   pinMode(PAUSE_LED, OUTPUT);
-  // digitalWrite(PAUSE_LED, HIGH);
   attachInterrupt(digitalPinToInterrupt(EXT_CLK), triggerOn, CHANGE);
   pinMode(encoder0PinA, INPUT_PULLUP);
   pinMode(encoder0PinB, INPUT_PULLUP);
   attachInterrupt(0, doEncoderA, CHANGE);
   attachInterrupt(1, doEncoderB, CHANGE);
   int i = 0;
-  for(int k = 0; k < 6; k++){
-    for (int n = 0; n < 2; n++){
+  for (int k = 0; k < 6; k++) {
+    for (int n = 0; n < 2; n++) {
       stepsPulses[k][n] = EEPROM.read(i);
       i++;
     }
@@ -109,7 +105,6 @@ void loop() {
     clkChange = millis();
   }
   if (digitalRead(CHANNEL_BUTTON) == LOW && millis() - hit > 250) {
-    Serial.println("Channel Change");
     changeChannel();
   }
   Serial.println(digitalRead(ROTATE_BUTTON));
@@ -125,17 +120,15 @@ void loop() {
   if (digitalRead(CHANNEL_BUTTON) == LOW && digitalRead(STEP_BUTTON) == HIGH) {
     writeArray();
   }
-  if(digitalRead(ROTATE_BUTTON) == LOW && digitalRead(STEP_BUTTON) == HIGH){
+  if (digitalRead(ROTATE_BUTTON) == LOW && digitalRead(STEP_BUTTON) == HIGH) {
     stateArray[6][16];
     int tempChannel = channel;
-      for (int i = 0; i < 6; i++){
-    remainder[16];
-  count[16];
-  state = 0;
-  compute_bitmap(stepsPulses[channel][0], stepsPulses[channel][1], channel);
-  channel++;
-  }
-  channel = tempChannel;
+    for (int i = 0; i < 6; i++) {
+      remainder[16];
+      count[16];
+      state = 0;
+      compute_bitmap(stepsPulses[i][0], stepsPulses[i][1], i);
+    }
   }
 
 }
@@ -522,12 +515,9 @@ void pauseFunc() {
   pause = !pause;
   if (pause) {
     digitalWrite(PAUSE_LED, HIGH);
-    Serial.println("Pause");
   }
   else {
     digitalWrite(PAUSE_LED, LOW);
-
-    Serial.println("Play");
   }
 }
 void writeArray() {
@@ -545,22 +535,17 @@ void writeArray() {
   digitalWrite(PAUSE_LED, HIGH);
   delay(50);
   digitalWrite(PAUSE_LED, LOW);
-  delay(50);
-  digitalWrite(PAUSE_LED, HIGH);
-  delay(50);
-  digitalWrite(PAUSE_LED, LOW);
-  delay(50);
-  if(pause){
+  if (pause) {
     digitalWrite(PAUSE_LED, HIGH);
   }
 }
 
-void calculateAll(){
-  for(int i = 0; i < 6; i++){
+void calculateAll() {
+  for (int i = 0; i < 6; i++) {
     remainder[16];
-  count[16];
-  state = 0;
-  compute_bitmap(stepsPulses[i][0], stepsPulses[i][1], i);
+    count[16];
+    state = 0;
+    compute_bitmap(stepsPulses[i][0], stepsPulses[i][1], i);
   }
 }
 
